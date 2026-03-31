@@ -1,0 +1,36 @@
+[project]
+name = "quantum-circuit-cutting"
+version = "0.1.0"
+description = "Quantum Circuit Cutting Library - Unified package"
+license = {text = "CC0-1.0"}
+requires-python = ">=3.10"
+
+dependencies = [
+    "qiskit >= 1.0",
+    "numpy",
+    "qcc-preprocess",
+    "qcc-cut-locator",
+    "qcc-circuit-cutter",
+    "qcc-device-recommender",
+    "qcc-circuit-transformer",
+    "qcc-classical",
+    "qcc-treewidth-gate-cut",
+    "qcc-annealing-transpiler",
+    "qiskit-aer",
+    "qiskit-ibm-runtime",
+    "qiskit-qasm3-import",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "jupyter",
+    "nbconvert",
+]
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
