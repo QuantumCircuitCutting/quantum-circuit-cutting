@@ -316,9 +316,13 @@ def step2_annealing_optimize(
         replace(p, qasm3=MyQuantumCircuit.ensure_rzz_gate_defined_for_qiskit_loads(p.qasm3))
         for p in subcircuits
     ]
+    # Expand device_info list to match subcircuit count if shorter
+    device_info = options["device_info"]
+    if isinstance(device_info, list) and len(device_info) < len(subcircuits):
+        device_info = [device_info[0]] * len(subcircuits)
     transpiled_subcircuits = annealing_transpile(
         subcircuits,
-        options["device_info"],
+        device_info,
         options["client"],
         options.get("annealing_mode", "best"),
         options.get("max_bits", 8192)
@@ -413,12 +417,8 @@ def step3_run_on_device(
         qasm_str = MyQuantumCircuit.ensure_rzz_gate_defined_for_qiskit_loads(qasm_str)
         qc = qasm3_loads(qasm_str)
         tqc = transpile(qc, backend)
-        job = backend.run(tqc, shots=shots)
-        result = job.result()
-        try:
-            counts = result.get_counts(0)
-        except Exception:
-            counts = {"0" * qc.num_clbits: shots}
+        from treewidth_gate_cut.treewidth_cut import _run_circuit
+        counts = _run_circuit(backend, tqc, shots)
         counts_by_key[k] = {str(key).replace(" ", ""): v for key, v in counts.items()}
 
     # Build DataClassSubQCRes with assignment and layout
